@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-obsidian text-slate-100 font-sans antialiased overflow-x-hidden;
+  }
+}
+
+/* Custom Cyber Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #090a0f;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 240, 255, 0.2);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 240, 255, 0.5);
+}
+
+/* Glassmorphism utility */
+.glass-panel {
+  background: rgba(18, 15, 36, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 240, 255, 0.12);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.glass-panel-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-panel-hover:hover {
+  border-color: rgba(0, 240, 255, 0.4);
+  box-shadow: 0 0 25px rgba(0, 240, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.cyber-grid-bg {
+  background-size: 24px 24px;
+  background-image: radial-gradient(circle, rgba(0, 240, 255, 0.07) 1px, transparent 1px);
+}
+
+/* Markdown Code Styling */
+.prose pre {
+  background-color: #0d111d !important;
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.prose code {
+  color: #00f0ff;
+  font-family: 'Fira Code', monospace;
+}
