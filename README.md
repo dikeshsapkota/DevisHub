@@ -156,7 +156,7 @@ DevHub follows a **Neo-Futurism Design System** featuring:
 - Express.js
 - TypeScript
 - Prisma ORM
-- PostgreSQL
+- Neon PostgreSQL
 - Socket.IO
 - Passport.js
 - JWT Authentication
@@ -240,9 +240,8 @@ client/.env
 ```
 
 ```env
-VITE_API_URL=
-VITE_GOOGLE_CLIENT_ID=
-VITE_GITHUB_CLIENT_ID=
+VITE_API_BASE_URL=http://localhost:5000/api
+VITE_SOCKET_URL=http://localhost:5000
 ```
 
 Create:
@@ -252,7 +251,9 @@ server/.env
 ```
 
 ```env
-DATABASE_URL=
+# Paste the pooled connection string from Neon → Connect.
+# It must use sslmode=require.
+DATABASE_URL="postgresql://<user>:<password>@<endpoint>.aws.neon.tech/<database>?sslmode=require"
 JWT_SECRET=
 
 GOOGLE_CLIENT_ID=
@@ -268,25 +269,18 @@ CLOUDINARY_API_SECRET=
 
 ---
 
-## Prisma
+## Neon database and Prisma
+
+Create a PostgreSQL project in [Neon](https://neon.tech), then paste its pooled connection string into `server/.env` as `DATABASE_URL`. This project does not require or start a local PostgreSQL server.
 
 ```bash
-npx prisma generate
-
-npx prisma migrate dev
+npm run prisma:generate
+npm run prisma:migrate
 ```
 
 ---
 
-## Start Backend
-
-```bash
-npm run dev
-```
-
----
-
-## Start Frontend
+## Start the app
 
 ```bash
 npm run dev

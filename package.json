@@ -18,6 +18,7 @@
     "build:client": "npm run build --prefix client",
     "build:server": "npm run build --prefix server",
     "prisma:generate": "npm run prisma:generate --prefix server",
+    "prisma:migrate": "npm run prisma:migrate --prefix server",
     "prisma:seed": "npm run prisma:seed --prefix server"
   },
   "devDependencies": {
