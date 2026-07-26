@@ -35,7 +35,7 @@ export const Navbar: React.FC = () => {
           </div>
           <div>
             <span className="font-extrabold text-xl tracking-tight bg-gradient-to-r from-slate-100 via-cyan-300 to-purple-400 bg-clip-text text-transparent">
-              DEV<span className="text-cyan-400">HUB</span>
+              DEVIS<span className="text-cyan-400">HUB</span>
             </span>
             <span className="hidden sm:inline-block text-[10px] font-mono text-cyan-400/70 ml-1.5 px-1.5 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/20">
               v1.0.0
