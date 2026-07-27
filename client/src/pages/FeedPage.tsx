@@ -40,6 +40,10 @@ export const FeedPage: React.FC = () => {
     e.preventDefault();
     if (!newContent.trim()) return;
 
+    if (!isAuthenticated) {
+      await demoLogin('alex_dev');
+    }
+
     try {
       await api.post('/posts', {
         content: newContent,
