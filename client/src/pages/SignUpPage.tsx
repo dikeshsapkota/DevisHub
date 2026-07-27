@@ -28,10 +28,10 @@ export const SignUpPage: React.FC = () => {
 
   return (
     <div className="min-h-[85vh] flex items-center justify-center px-4 py-12">
-      <GlassPanel glow="cyan" className="w-full max-w-md space-y-6 bg-darkNavy/90 border-cyan-500/30">
+      <GlassPanel hoverEffect={false} className="w-full max-w-md space-y-6 bg-[#181a1e]">
         <div className="text-center space-y-2">
-          <div className="w-12 h-12 rounded-2xl bg-darkViolet border border-cyan-500/40 flex items-center justify-center mx-auto shadow-[0_0_20px_rgba(0,240,255,0.2)]">
-            <Terminal className="w-6 h-6 text-cyan-400" />
+          <div className="w-11 h-11 rounded-lg bg-cyan-400 text-slate-950 flex items-center justify-center mx-auto">
+            <Terminal className="w-5 h-5" />
           </div>
           <h2 className="text-2xl font-extrabold text-slate-100">Join DevisHub Community</h2>
           <p className="text-xs text-slate-400">Create your developer identity</p>
@@ -95,7 +95,7 @@ export const SignUpPage: React.FC = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 rounded-xl font-bold bg-gradient-to-r from-cyan-500 to-purple-600 text-slate-950 shadow-[0_0_20px_rgba(0,240,255,0.3)] hover:brightness-110 flex items-center justify-center gap-2 text-sm"
+            className="w-full py-3 rounded-lg font-bold bg-cyan-400 text-slate-950 hover:bg-cyan-300 flex items-center justify-center gap-2 text-sm transition-colors"
           >
             {loading ? 'Creating Account...' : 'Create Account'}
             <ArrowRight className="w-4 h-4" />
