@@ -9,6 +9,7 @@ import {
 import { sendSuccess, sendError } from '../utils/response.js';
 import { registerSchema, loginSchema } from '../validators/schemas.js';
 import { AuthenticatedRequest } from '../middleware/auth.js';
+import { clearAuthCookies, setAccessTokenCookie, setAuthCookies } from '../utils/authCookies.js';
 
 export const register = async (req: Request, res: Response) => {
   try {
@@ -60,19 +61,7 @@ export const register = async (req: Request, res: Response) => {
       },
     });
 
-    res.cookie('accessToken', accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 15 * 60 * 1000,
-    });
-
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+    setAuthCookies(res, accessToken, refreshToken);
 
     return sendSuccess(res, { user, accessToken, refreshToken }, 'Account created successfully', 201);
   } catch (err: any) {
@@ -124,19 +113,7 @@ export const login = async (req: Request, res: Response) => {
       },
     });
 
-    res.cookie('accessToken', accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 15 * 60 * 1000,
-    });
-
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+    setAuthCookies(res, accessToken, refreshToken);
 
     return sendSuccess(res, { user, accessToken, refreshToken }, 'Logged in successfully');
   } catch (err: any) {
@@ -150,10 +127,39 @@ export const login = async (req: Request, res: Response) => {
 export const demoLogin = async (req: Request, res: Response) => {
   try {
     const username = (req.body.username || 'alex_dev').toLowerCase();
-    let user = await prisma.user.findUnique({
-      where: { username },
-      include: { profile: true },
-    });
+    let user =
+      username === 'admin_demo'
+        ? await prisma.user.upsert({
+            where: { username: 'admin_demo' },
+            update: {
+              role: 'ADMIN',
+              status: 'ONLINE',
+              isVerified: true,
+              isOnboarded: true,
+            },
+            create: {
+              name: 'Demo Admin',
+              username: 'admin_demo',
+              email: 'admin@devishub.io',
+              role: 'ADMIN',
+              avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=admin_demo',
+              status: 'ONLINE',
+              isVerified: true,
+              isOnboarded: true,
+              profile: {
+                create: {
+                  headline: 'Platform Administrator @ DevisHub',
+                  bio: 'Demo administrator account for reviewing privileged flows.',
+                  completionPercentage: 80,
+                },
+              },
+            },
+            include: { profile: true },
+          })
+        : await prisma.user.findUnique({
+            where: { username },
+            include: { profile: true },
+          });
 
     if (!user) {
       user = await prisma.user.findFirst({
@@ -180,19 +186,7 @@ export const demoLogin = async (req: Request, res: Response) => {
     const accessToken = generateAccessToken(tokenPayload);
     const refreshToken = generateRefreshToken(tokenPayload);
 
-    res.cookie('accessToken', accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 15 * 60 * 1000,
-    });
-
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+    setAuthCookies(res, accessToken, refreshToken);
 
     return sendSuccess(res, { user, accessToken, refreshToken }, `Logged in as demo user ${user.username}`);
   } catch (err: any) {
@@ -235,8 +229,7 @@ export const logout = async (req: AuthenticatedRequest, res: Response) => {
       });
     }
 
-    res.clearCookie('accessToken');
-    res.clearCookie('refreshToken');
+    clearAuthCookies(res);
 
     return sendSuccess(res, null, 'Logged out successfully');
   } catch (err: any) {
@@ -257,11 +250,6 @@ export const refresh = async (req: Request, res: Response) => {
   }
 
   const accessToken = generateAccessToken(payload);
-  res.cookie('accessToken', accessToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    maxAge: 15 * 60 * 1000,
-  });
+  setAccessTokenCookie(res, accessToken);
   return sendSuccess(res, { accessToken }, 'Access token refreshed');
 };

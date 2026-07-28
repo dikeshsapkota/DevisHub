@@ -3,6 +3,7 @@ import passport from 'passport';
 import { Strategy as GoogleStrategy, type Profile as GoogleProfile } from 'passport-google-oauth20';
 import { Strategy as GitHubStrategy, type Profile as GitHubProfile } from 'passport-github2';
 import { prisma } from './prisma.js';
+import { getApiUrl } from './deployment.js';
 
 dotenv.config();
 
@@ -63,7 +64,7 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
       {
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: `${process.env.OAUTH_CALLBACK_URL || 'http://localhost:5000'}/api/auth/oauth/google/callback`,
+        callbackURL: `${getApiUrl()}/api/auth/oauth/google/callback`,
       },
       (_accessToken, _refreshToken, profile, done) => {
         void resolveUser('google', profile)
@@ -88,7 +89,7 @@ if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
       {
         clientID: process.env.GITHUB_CLIENT_ID,
         clientSecret: process.env.GITHUB_CLIENT_SECRET,
-        callbackURL: `${process.env.OAUTH_CALLBACK_URL || 'http://localhost:5000'}/api/auth/oauth/github/callback`,
+        callbackURL: `${getApiUrl()}/api/auth/oauth/github/callback`,
         scope: ['user:email'],
       },
       (_accessToken: string, _refreshToken: string, profile: GitHubProfile, done: (error: unknown, user?: Express.User | false) => void) => {

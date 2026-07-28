@@ -6,6 +6,7 @@ import path from 'path';
 import dotenv from 'dotenv';
 import passport from 'passport';
 import './config/passport.js';
+import { corsOptions } from './config/deployment.js';
 
 import authRoutes from './routes/authRoutes.js';
 import profileRoutes from './routes/profileRoutes.js';
@@ -23,12 +24,7 @@ dotenv.config();
 export const app = express();
 
 app.use(helmet({ contentSecurityPolicy: false }));
-app.use(
-  cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:5173',
-    credentials: true,
-  })
-);
+app.use(cors(corsOptions));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser());

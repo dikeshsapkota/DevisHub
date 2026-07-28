@@ -3,6 +3,8 @@ import passport from 'passport';
 import { prisma } from '../config/prisma.js';
 import { generateAccessToken, generateRefreshToken } from '../utils/jwt.js';
 import { sendError } from '../utils/response.js';
+import { getClientUrl } from '../config/deployment.js';
+import { setAuthCookies } from '../utils/authCookies.js';
 
 type Provider = 'google' | 'github';
 
@@ -33,7 +35,7 @@ export function completeOAuth(req: Request, res: Response, next: NextFunction) {
 
   return passport.authenticate(provider, { session: false }, async (error: unknown, user: any) => {
     if (error || !user) {
-      return res.redirect(`${process.env.CLIENT_URL || 'http://localhost:5173'}/signin?oauth=failed`);
+      return res.redirect(`${getClientUrl()}/signin?oauth=failed`);
     }
     const payload = { userId: user.id, email: user.email, username: user.username, role: user.role };
     const accessToken = generateAccessToken(payload);
@@ -45,13 +47,7 @@ export function completeOAuth(req: Request, res: Response, next: NextFunction) {
         expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       },
     });
-    const cookieOptions = {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax' as const,
-    };
-    res.cookie('accessToken', accessToken, { ...cookieOptions, maxAge: 15 * 60 * 1000 });
-    res.cookie('refreshToken', refreshToken, { ...cookieOptions, maxAge: 7 * 24 * 60 * 60 * 1000 });
-    return res.redirect(`${process.env.CLIENT_URL || 'http://localhost:5173'}/feed`);
+    setAuthCookies(res, accessToken, refreshToken);
+    return res.redirect(`${getClientUrl()}/feed`);
   })(req, res, next);
 }
