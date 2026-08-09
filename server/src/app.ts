@@ -49,5 +49,15 @@ app.get('/api/health', (_req, res) => {
   res.json({ status: 'OK', name: 'DevisHub API Engine', timestamp: new Date() });
 });
 
+// Compatibility routes for deployments configured with a root API base URL.
+app.use('/auth', authRoutes);
+
+app.use('/api', (req, res) => {
+  res.status(404).json({
+    success: false,
+    error: `API route not found: ${req.method} ${req.originalUrl}`,
+  });
+});
+
 // Centralized error handler
 app.use(errorHandler);

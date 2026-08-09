@@ -2,7 +2,30 @@ import { Response } from 'express';
 import { prisma } from '../config/prisma.js';
 import { sendSuccess, sendError } from '../utils/response.js';
 import { AuthenticatedRequest } from '../middleware/auth.js';
-
+import type { Prisma } from '@prisma/client';
+type ConversationWithDetails = Prisma.ConversationGetPayload<{
+  include: {
+    participants: {
+      include: {
+        user: {
+          select: {
+            id: true;
+            name: true;
+            username: true;
+            avatarUrl: true;
+            status: true;
+          };
+        };
+      };
+    };
+    messages: {
+      orderBy: {
+        createdAt: 'desc';
+      };
+      take: 1;
+    };
+  };
+}>;
 export const getConversations = async (req: AuthenticatedRequest, res: Response) => {
   try {
     if (!req.user) return sendError(res, 'Unauthorized', 401);
@@ -35,7 +58,8 @@ export const getConversations = async (req: AuthenticatedRequest, res: Response)
       orderBy: { updatedAt: 'desc' },
     });
 
-    const formatted = conversations.map((conv) => {
+    const formatted = conversations.map(
+  (conv: ConversationWithDetails) => {
       const otherParticipant = conv.participants.find((p) => p.userId !== req.user?.userId)?.user;
       const lastMessage = conv.messages[0] || null;
       return {

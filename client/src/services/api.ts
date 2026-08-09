@@ -1,5 +1,13 @@
 import axios from 'axios';
 
+const normalizeApiBaseUrl = (value?: string) => {
+  const baseUrl = value?.trim();
+  if (!baseUrl) return '/api';
+
+  const withoutTrailingSlash = baseUrl.replace(/\/+$/, '');
+  return withoutTrailingSlash.endsWith('/api') ? withoutTrailingSlash : `${withoutTrailingSlash}/api`;
+};
+
 const getErrorMessage = (error: unknown): string => {
   if (typeof error === 'string' && error.trim()) return error;
 
@@ -30,7 +38,7 @@ const getErrorMessage = (error: unknown): string => {
 };
 
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
+  baseURL: normalizeApiBaseUrl(import.meta.env.VITE_API_BASE_URL),
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
