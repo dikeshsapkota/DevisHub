@@ -1,12 +1,22 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { GlassPanel } from '../components/common/GlassPanel';
 import { Badge } from '../components/common/Badge';
 import { Terminal, Code, Users, Sparkles, FolderGit2, ArrowRight, Shield, Zap, Cpu, Star, MessageSquare } from 'lucide-react';
 
 export const LandingPage: React.FC = () => {
-  const { demoLogin, isAuthenticated } = useAuthStore();
+  const { demoLogin, isAuthenticated, isLoading } = useAuthStore();
+  const navigate = useNavigate();
+
+  const handleDemoLogin = async () => {
+    await demoLogin('alex_dev');
+    navigate('/feed');
+  };
+
+  if (!isLoading && isAuthenticated) {
+    return <Navigate to="/feed" replace />;
+  }
 
   return (
     <div className="min-h-screen space-y-20 py-10">
@@ -38,7 +48,7 @@ export const LandingPage: React.FC = () => {
           </Link>
 
           <button
-            onClick={() => demoLogin('alex_dev')}
+            onClick={handleDemoLogin}
             className="w-full sm:w-auto px-6 py-3 rounded-lg font-medium glass-panel text-slate-200 hover:bg-white/5 transition-colors flex items-center justify-center gap-2 text-base"
           >
             <Zap className="w-4 h-4 text-cyan-400" />
