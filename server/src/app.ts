@@ -1,10 +1,12 @@
+import 'dotenv/config';
+
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import path from 'path';
-import dotenv from 'dotenv';
 import passport from 'passport';
+
 import './config/passport.js';
 import { corsOptions } from './config/deployment.js';
 
@@ -17,21 +19,25 @@ import chatRoutes from './routes/chatRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
 import searchRoutes from './routes/searchRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
-import { errorHandler } from './middleware/error.js';
 
-dotenv.config();
+import { errorHandler } from './middleware/error.js';
 
 export const app = express();
 
 app.use(helmet({ contentSecurityPolicy: false }));
+
 app.use(cors(corsOptions));
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser());
+
 app.use(passport.initialize());
 
-// Static uploads fallback
-app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+app.use(
+  '/uploads',
+  express.static(path.join(process.cwd(), 'uploads'))
+);
 
 // API Routes
 app.use('/api/auth', authRoutes);
@@ -44,14 +50,19 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/uploads', uploadRoutes);
 
-// Health check endpoint
+// Health check
 app.get('/api/health', (_req, res) => {
-  res.json({ status: 'OK', name: 'DevisHub API Engine', timestamp: new Date() });
+  res.json({
+    status: 'OK',
+    name: 'DevisHub API Engine',
+    timestamp: new Date(),
+  });
 });
 
-// Compatibility routes for deployments configured with a root API base URL.
+// Compatibility route
 app.use('/auth', authRoutes);
 
+// API 404
 app.use('/api', (req, res) => {
   res.status(404).json({
     success: false,
@@ -59,5 +70,5 @@ app.use('/api', (req, res) => {
   });
 });
 
-// Centralized error handler
+// Error handler
 app.use(errorHandler);
