@@ -2,6 +2,10 @@ import type { CorsOptions } from 'cors';
 
 const LOCAL_CLIENT_URL = 'http://localhost:5173';
 const LOCAL_API_URL = 'http://localhost:5000';
+const LOCAL_ORIGINS = [
+  'http://localhost:5173',
+  'http://localhost:5174',
+];
 
 const toHttpsUrl = (value?: string) => {
   if (!value) return undefined;
@@ -34,7 +38,7 @@ export const getAllowedOrigins = () =>
   Array.from(
     new Set(
       [
-        LOCAL_CLIENT_URL,
+        ...LOCAL_ORIGINS,
         ...splitUrls(process.env.CLIENT_URL),
         toHttpsUrl(process.env.VERCEL_PROJECT_PRODUCTION_URL),
         toHttpsUrl(process.env.VERCEL_URL),
