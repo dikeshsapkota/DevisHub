@@ -96,14 +96,6 @@ export const SignInPage: React.FC = () => {
 
         <div className="relative border-t border-white/10 pt-4 text-center">
           <button
-            onClick={() => handleDemoLogin('admin_demo')}
-            disabled={loading}
-            className="mb-3 w-full py-2.5 rounded-lg text-xs font-mono bg-cyan-400 text-slate-950 border border-cyan-300 hover:bg-cyan-300 disabled:opacity-60 flex items-center justify-center gap-2 transition-colors"
-          >
-            <Sparkles className="w-4 h-4" />
-            1-Click Admin Demo (@admin_demo)
-          </button>
-          <button
             onClick={() => handleDemoLogin('alex_dev')}
             disabled={loading}
             className="w-full py-2.5 rounded-lg text-xs font-mono bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10 flex items-center justify-center gap-2 transition-colors"
